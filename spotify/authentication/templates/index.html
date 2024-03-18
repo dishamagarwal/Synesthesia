@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attribute Sliders</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="slider-container">
+    <div class="slider">
+        <label for="melancholicCheerful">Melancholic vs Cheerful</label>
+        <input type="range" id="melancholicCheerful" min="0" max="1" step="0.01" value="0.5">
+        <span id="melancholicCheerfulValue">0.5</span>
+    </div>
+    <div class="slider">
+        <label for="electronicOrganic">Electronic vs Organic</label>
+        <input type="range" id="electronicOrganic" min="0" max="1" step="0.01" value="0.5">
+        <span id="electronicOrganicValue">0.5</span>
+    </div>
+    <div class="slider">
+        <label for="lowHighEnergy">Low Energy vs High Energy</label>
+        <input type="range" id="lowHighEnergy" min="0" max="1" step="0.01" value="0.5">
+        <span id="lowHighEnergyValue">0.5</span>
+    </div>
+</div>
+<button id="saveBtn">Save Values</button>
+<script src="scripts.js"></script>
+</body>
+</html>

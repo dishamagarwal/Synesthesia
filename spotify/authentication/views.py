@@ -14,11 +14,7 @@ def login(request):
     redirect_uri = "http://127.0.0.1:8080/home"
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, redirect_uri=redirect_uri))
     results = sp.current_user_saved_tracks()
-    # for idx, item in enumerate(results['items']):
-    #     track = item['track']
-    #     print(idx, track['artists'][0]['name'], " – ", track['name'])
     print("Successully logged in")
-    # return HttpResponse("Successully logged in")
     return redirect(reverse('home'))
 
 def home(request):

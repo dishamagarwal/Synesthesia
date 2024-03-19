@@ -1,22 +1,32 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const sliders = document.querySelectorAll('input[type="range"]');
-    const values = document.querySelectorAll('span');
+let a = 0.5; // Initial value for a
+let b = 0.5; // Initial value for b
+let c = 0.5; // Initial value for c
 
-    sliders.forEach((slider, index) => {
-        slider.addEventListener('input', function () {
-            values[index].textContent = this.value;
-        });
-    });
+const sliders = document.querySelectorAll('input[type="range"]');
 
-    const saveBtn = document.getElementById('saveBtn');
-    saveBtn.addEventListener('click', function () {
-        const melancholicCheerfulValue = parseFloat(document.getElementById('melancholicCheerful').value);
-        const electronicOrganicValue = parseFloat(document.getElementById('electronicOrganic').value);
-        const lowHighEnergyValue = parseFloat(document.getElementById('lowHighEnergy').value);
-        
-        // You can use these variables to save the values to your backend or perform further actions
-        console.log('Melancholic vs Cheerful:', melancholicCheerfulValue);
-        console.log('Electronic vs Organic:', electronicOrganicValue);
-        console.log('Low Energy vs High Energy:', lowHighEnergyValue);
+sliders.forEach(slider => {
+    slider.addEventListener('input', () => {
+        // Update variables a, b, or c based on slider id
+        if (slider.id === 'melancholic') {
+            a = parseFloat(slider.value);
+        } else if (slider.id === 'electronic') {
+            b = parseFloat(slider.value);
+        } else if (slider.id === 'energy') {
+            c = parseFloat(slider.value);
+        }
+
+        // Print updated values of a, b, and c in the console
+        console.log('Updated values:');
+        console.log('a:', a);
+        console.log('b:', b);
+        console.log('c:', c);
+
+        // Call updateColor function or perform other actions as needed
+        updateColor();
     });
 });
+
+function updateColor() {
+    // Update color grid or perform other actions based on variables a, b, c
+    console.log('Updating color grid or performing other actions...');
+}

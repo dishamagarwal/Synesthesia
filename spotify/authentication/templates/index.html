@@ -6,35 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synesthesia</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000; /* Black background */
+            color: #fff; /* White text */
+        }
+
+        /* Custom CSS for button styling */
+        .btn-primary {
+            background-color: #ff00ff; /* Vibrant pink background */
+            border-color: #ff00ff; /* Border color same as background */
+            color: #fff; /* White text */
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #ff33ff; /* Lighter pink on hover/focus */
+            border-color: #ff33ff;
+            color: #fff;
+        }
+
+        .btn-primary:active {
+            background-color: #e600e6; /* Darker pink when active */
+            border-color: #e600e6;
+            color: #fff;
+        }
+
+        /* Custom CSS for sliders */
+        .sliders label {
+            color: #fff; /* White text for slider labels */
+        }
+
+        .sliders input[type="range"] {
+            background-color: #ff00ff; /* Vibrant pink color for sliders */
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <div class="content">
-        <h1>Synesthesia</h1>
-        <h2>Not Genre</h2>
+        <h1 style="font-size: 80px">Synesthesia</h1>
+        <h2 style="font-size: 30px">Not Genre</h2>
 
         <div class="sliders">
-            <label for="melancholic">Melancholic vs Cheerful</label>
+            <label for="melancholic">Melancholic</label>
             <input type="range" id="melancholic" name="melancholic" min="0" max="1" step="0.01">
-            <br>
+            <label for="melancholic">Cheerful</label>
+            <br><br>
 
-            <label for="electronic">Electronic vs Organic</label>
+            <label for="electronic">Electronic</label>
             <input type="range" id="electronic" name="electronic" min="0" max="1" step="0.01">
-            <br>
+            <label for="electronic">Organic</label>
+            <br><br>
 
-            <label for="energy">Low Energy vs High Energy</label>
+            <label for="energy">Low Energy</label>
             <input type="range" id="energy" name="energy" min="0" max="1" step="0.01">
+            <label for="energy">High Energy</label>
         </div>
 
+        <button id="spotifyApiButton" class="btn btn-primary">Get Spotify API Data</button>
+
         <div class="color-grid">
-            <div class="color" id="color1"></div>
-            <div class="color" id="color2"></div>
-            <div class="color" id="color3"></div>
-            <!-- Add more color divs as needed -->
+            <!-- Your color grid divs here -->
         </div>
     </div>
 </div>
 
+<!-- Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="{% static 'scripts.js' %}"></script>
 </body>
 </html>

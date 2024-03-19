@@ -1,32 +1,57 @@
-let a = 0.5; // Initial value for a
-let b = 0.5; // Initial value for b
-let c = 0.5; // Initial value for c
+class SliderValues {
+    constructor() {
+        this.sliders = document.querySelectorAll('input[type="range"]');
+        this.sliderValues = {};
 
-const sliders = document.querySelectorAll('input[type="range"]');
+        this.sliders.forEach(slider => {
+            this.sliderValues[slider.id] = parseFloat(slider.value);
+            slider.addEventListener('input', this.updateSliderValue.bind(this, slider.id));
+        });
+    }
 
-sliders.forEach(slider => {
-    slider.addEventListener('input', () => {
-        // Update variables a, b, or c based on slider id
-        if (slider.id === 'melancholic') {
-            a = parseFloat(slider.value);
-        } else if (slider.id === 'electronic') {
-            b = parseFloat(slider.value);
-        } else if (slider.id === 'energy') {
-            c = parseFloat(slider.value);
-        }
+    updateSliderValue(sliderId) {
+        const slider = document.getElementById(sliderId);
+        this.sliderValues[sliderId] = parseFloat(slider.value);
+        console.log(`Updated value of ${sliderId}: ${this.sliderValues[sliderId]}`);
+        // You can perform additional actions here, such as updating UI elements or sending data to a server
+    }
 
-        // Print updated values of a, b, and c in the console
-        console.log('Updated values:');
-        console.log('a:', a);
-        console.log('b:', b);
-        console.log('c:', c);
+    getAllSliderValues() {
+        return this.sliderValues;
+    }
+}
 
-        // Call updateColor function or perform other actions as needed
-        updateColor();
-    });
+// Initialize the SliderValues class when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const sliderValues = new SliderValues();
+    
+    // Example of getting all slider values
+    const allSliderValues = sliderValues.getAllSliderValues();
+    console.log('All slider values:', allSliderValues);
 });
 
-function updateColor() {
-    // Update color grid or perform other actions based on variables a, b, c
-    console.log('Updating color grid or performing other actions...');
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const spotifyApiButton = document.getElementById('spotifyApiButton');
+
+    spotifyApiButton.addEventListener('click', async () => {
+        try {
+            // Make a fetch request to your backend endpoint that handles the Spotify API call
+            const response = await fetch('/your-backend-endpoint-for-spotify-api');
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch data from Spotify API');
+            }
+
+            // Parse the JSON response
+            const data = await response.json();
+
+            // Display or process the data received from the Spotify API
+            console.log('Data from Spotify API:', data);
+            // You can update the UI or perform additional actions with the data here
+
+        } catch (error) {
+            console.error('Error fetching data from Spotify API:', error);
+            // Handle the error, show an error message, or retry the request
+        }
+    });
+});

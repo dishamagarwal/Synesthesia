@@ -1,2 +1,2 @@
 # Synesthesia
-Create playlists and covers by connection sounds and colors. Explore Synesthesia.
+Create playlists and covers by connecting sounds and colors. Explore Synesthesia.

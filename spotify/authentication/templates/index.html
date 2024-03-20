@@ -50,6 +50,9 @@
         <h1 style="font-size: 80px">Synesthesia</h1>
         <h2 style="font-size: 30px">Not Genre</h2>
 
+        <!-- CSRF token input field -->
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
         <div class="sliders">
             <label for="melancholic">Melancholic</label>
             <input type="range" id="melancholic" name="melancholic" min="0" max="1" step="0.01">

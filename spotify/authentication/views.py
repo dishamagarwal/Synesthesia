@@ -2,10 +2,12 @@
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-import spotipy
 from django.urls import reverse
 from spotipy.oauth2 import SpotifyOAuth
-# Create your views here.
+from django.http import JsonResponse
+import spotipy
+import json
+
 def index(request):
     return HttpResponse("Hello, world. You're at the auth index.")
 
@@ -19,3 +21,15 @@ def login(request):
 
 def home(request):
     return render(request, 'index.html')
+
+def getPlaylist(request):
+    print('Request body:', request.body)  # Print the request body for debugging
+    try:
+        data = json.loads(request.body)
+        sliders = data.get('sliders', {})
+        print('Slider values:', sliders)
+        # Your code to process the data
+        return JsonResponse({'message': 'got data!'})
+    except json.JSONDecodeError as e:
+        print('Error decoding JSON:', str(e))  # Print JSON decode error for debugging
+        return JsonResponse({'error': 'Invalid JSON format'}, status=400)

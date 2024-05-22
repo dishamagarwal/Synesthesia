@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synesthesia</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -14,7 +13,6 @@
             color: #fff; /* White text */
         }
 
-        /* Custom CSS for button styling */
         .btn-primary {
             background-color: #ff00ff; /* Vibrant pink background */
             border-color: #ff00ff; /* Border color same as background */
@@ -34,13 +32,13 @@
             color: #fff;
         }
 
-        /* Custom CSS for sliders */
         .sliders label {
             color: #fff; /* White text for slider labels */
         }
 
         .sliders input[type="range"] {
             background-color: #ff00ff; /* Vibrant pink color for sliders */
+            width: 45%;
         }
     </style>
 </head>
@@ -48,32 +46,54 @@
 <div class="container">
     <div class="content">
         <h1 style="font-size: 80px">Synesthesia</h1>
-        <h2 style="font-size: 30px">Not Genre</h2>
+        <h2 style="font-size: 30px">Not Genre</h2><br><br>
 
         <!-- CSRF token input field -->
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
         <div class="sliders">
-            <label for="melancholic">Melancholic</label>
-            <input type="range" id="melancholic" name="melancholic" min="0" max="1" step="0.01">
-            <label for="melancholic">Cheerful</label>
+            {% comment %} genres {% endcomment %}
+            <label for="cool">Cooler</label>
+            <input type="range" id="cool" name="cool" min="0" max="1" step="0.01">
+            <label for="cool">Warmer</label>
             <br><br>
-
-            <label for="electronic">Electronic</label>
-            <input type="range" id="electronic" name="electronic" min="0" max="1" step="0.01">
-            <label for="electronic">Organic</label>
+            {% comment %} energy + dancibility + valance {% endcomment %}
+            <label for="darkness">Darker</label>
+            <input type="range" id="darkness" name="darkness" min="0" max="1" step="0.01">
+            <label for="darkness">Lighter</label>
             <br><br>
-
-            <label for="energy">Low Energy</label>
-            <input type="range" id="energy" name="energy" min="0" max="1" step="0.01">
-            <label for="energy">High Energy</label>
+            {% comment %} loudness {% endcomment %}
+            <label for="contrast">Low Contrast</label>
+            <input type="range" id="contrast" name="contrast" min="0" max="1" step="0.01">
+            <label for="contrast">High Contrast</label>
+            <br><br>
+            {% comment %} instrumentalness ????????? {% endcomment %}
+            <label for="gradient">Gradient</label>
+            <input type="range" id="gradient" name="gradient" min="0" max="1" step="0.01">
+            <label for="gradient">Solid</label>
+            <br><br>
+            {% comment %} livliness + tempo {% endcomment %}
+            <label for="saturation">Low Saturation</label>
+            <input type="range" id="saturation" name="saturation" min="0" max="1" step="0.01">
+            <label for="saturation">High Saturation</label>
+            <br><br>
+            {% comment %} speachiness {% endcomment %}
+            <label for="texture">Smooth</label> 
+            <input type="range" id="texture" name="texture" min="0" max="1" step="0.01">
+            <label for="texture">Textured</label>
+            <br><br>
+            {% comment %} acousticness {% endcomment %}
+            <label for="neutral">Colorful</label>
+            <input type="range" id="neutral" name="neutral" min="0" max="1" step="0.01">
+            <label for="neutral">Neutral</label>
         </div>
+
 
         <button id="spotifyApiButton" class="btn btn-primary">Get Spotify API Data</button>
 
-        <div class="color-grid">
+        {% comment %} <div class="color-grid">
             <!-- Your color grid divs here -->
-        </div>
+        </div> {% endcomment %}
     </div>
 </div>
 

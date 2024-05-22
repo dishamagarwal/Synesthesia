@@ -52,12 +52,10 @@
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
         <div class="sliders">
-            <!-- Cooler - Warmer slider -->
             <label for="cool">Hue 0</label>
             <input type="range" id="cool" name="cool" min="0" max="1" step="0.01">
             <label for="cool">Hue 360</label>
             <br><br>
-            <!-- Other sliders -->
             <label for="darkness">Darker</label>
             <input type="range" id="darkness" name="darkness" min="0" max="1" step="0.01">
             <label for="darkness">Lighter</label>
@@ -112,7 +110,6 @@
             document.body.style.backgroundColor = `hsl(${hue}, 50%, 50%)`;
             document.querySelector('h1').style.color = `hsl(${oppositeHue}, 100%, 50%)`;
             spotifyApiButton.style.backgroundColor = `hsl(${oppositeHue}, 100%, 50%)`;
-            // spotifyApiButton.style.color = '#fff';
         });
     
         darknessSlider.addEventListener('input', () => {
@@ -128,7 +125,7 @@
                 });
             } else {
                 sliderLabels.forEach(label => {
-                    label.style.color = '#fff'; // Reset slider label colors to white
+                    label.style.color = '#fff';
                 });
                 spotifyApiButton.style.color = '#fff';
             }

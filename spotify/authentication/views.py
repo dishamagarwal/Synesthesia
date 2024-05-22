@@ -63,13 +63,13 @@ def getPlaylist(request):
         print(tracks)
 
         # Generate a unique and cool name for the playlist (e.g., "My Awesome Playlist")
-        # playlist_name = generatePlaylistName()
-        # user_id = sp.me()['id'] 
-        # playlist = sp.user_playlist_create(user=user_id, name=playlist_name, public=False)
-        # playlist_id = playlist['id']
-        # track_uris = [track['uri'] for track in recommendations['tracks']]
-        # sp.playlist_add_items(playlist_id=playlist_id, items=track_uris)
-        # print(f"Playlist '{playlist_name}' created and tracks added successfully!")
+        playlist_name = generatePlaylistName()
+        user_id = sp.me()['id'] 
+        playlist = sp.user_playlist_create(user=user_id, name=playlist_name, public=False)
+        playlist_id = playlist['id']
+        track_uris = [track['uri'] for track in recommendations['tracks']]
+        sp.playlist_add_items(playlist_id=playlist_id, items=track_uris)
+        print(f"Playlist '{playlist_name}' created and tracks added successfully!")
 
         return JsonResponse({'message': 'got data!'})
     except json.JSONDecodeError as e:

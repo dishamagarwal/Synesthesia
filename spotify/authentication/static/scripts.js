@@ -1,3 +1,5 @@
+// ToDO: not sure what the real point is of having this when i have this code in my html - ask a frontend dev
+
 document.addEventListener('DOMContentLoaded', () => {
     const spotifyApiButton = document.getElementById('spotifyApiButton');
     const sliders = document.querySelectorAll('input[type="range"]');

@@ -52,48 +52,38 @@
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
         <div class="sliders">
-            {% comment %} genres {% endcomment %}
-            <label for="cool">Cooler</label>
+            <!-- Cooler - Warmer slider -->
+            <label for="cool">Hue 0</label>
             <input type="range" id="cool" name="cool" min="0" max="1" step="0.01">
-            <label for="cool">Warmer</label>
+            <label for="cool">Hue 360</label>
             <br><br>
-            {% comment %} energy + dancibility + valance {% endcomment %}
+            <!-- Other sliders -->
             <label for="darkness">Darker</label>
             <input type="range" id="darkness" name="darkness" min="0" max="1" step="0.01">
             <label for="darkness">Lighter</label>
             <br><br>
-            {% comment %} loudness {% endcomment %}
             <label for="contrast">Low Contrast</label>
             <input type="range" id="contrast" name="contrast" min="0" max="1" step="0.01">
             <label for="contrast">High Contrast</label>
             <br><br>
-            {% comment %} instrumentalness ????????? {% endcomment %}
             <label for="gradient">Gradient</label>
             <input type="range" id="gradient" name="gradient" min="0" max="1" step="0.01">
             <label for="gradient">Solid</label>
             <br><br>
-            {% comment %} livliness + tempo {% endcomment %}
             <label for="saturation">Low Saturation</label>
             <input type="range" id="saturation" name="saturation" min="0" max="1" step="0.01">
             <label for="saturation">High Saturation</label>
-            <br><br>
-            {% comment %} speachiness {% endcomment %}
-            <label for="texture">Smooth</label> 
+            {% comment %} <br><br>
+            <label for="texture">Smooth</label>
             <input type="range" id="texture" name="texture" min="0" max="1" step="0.01">
             <label for="texture">Textured</label>
             <br><br>
-            {% comment %} acousticness {% endcomment %}
             <label for="neutral">Colorful</label>
             <input type="range" id="neutral" name="neutral" min="0" max="1" step="0.01">
-            <label for="neutral">Neutral</label>
+            <label for="neutral">Neutral</label> {% endcomment %}
         </div>
 
-
         <button id="spotifyApiButton" class="btn btn-primary">Get Spotify API Data</button>
-
-        {% comment %} <div class="color-grid">
-            <!-- Your color grid divs here -->
-        </div> {% endcomment %}
     </div>
 </div>
 
@@ -102,5 +92,134 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="{% static 'scripts.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const spotifyApiButton = document.getElementById('spotifyApiButton');
+        const sliders = document.querySelectorAll('input[type="range"]');
+        const coolSlider = document.getElementById('cool');
+        const darknessSlider = document.getElementById('darkness');
+        const contrastSlider = document.getElementById('contrast');
+        const gradientSlider = document.getElementById('gradient');
+        const saturationSlider = document.getElementById('saturation');
+        const textureSlider = document.getElementById('texture');
+        const neutralSlider = document.getElementById('neutral');
+        const sliderLabels = document.querySelectorAll('.sliders label');
+    
+        coolSlider.addEventListener('input', () => {
+            const hue = coolSlider.value * 360;
+            const oppositeHue = (hue + 180) % 360;
+    
+            document.body.style.backgroundColor = `hsl(${hue}, 50%, 50%)`;
+            document.querySelector('h1').style.color = `hsl(${oppositeHue}, 100%, 50%)`;
+            spotifyApiButton.style.backgroundColor = `hsl(${oppositeHue}, 100%, 50%)`;
+            // spotifyApiButton.style.color = '#fff';
+        });
+    
+        darknessSlider.addEventListener('input', () => {
+            const darkness = darknessSlider.value;
+            const hue = coolSlider.value * 360;
+            const brightness = 50 - (1 - darkness) * 50;
+    
+            document.body.style.backgroundColor = `hsl(${hue}, 100%, ${brightness}%)`;
+            if (brightness > 70) {
+                spotifyApiButton.style.color = '#000';
+                sliderLabels.forEach(label => {
+                    label.style.color = '#000';
+                });
+            } else {
+                sliderLabels.forEach(label => {
+                    label.style.color = '#fff'; // Reset slider label colors to white
+                });
+                spotifyApiButton.style.color = '#fff';
+            }
+        });
+    
+        contrastSlider.addEventListener('input', () => {
+            const contrast = contrastSlider.value;
+            const contrastValue = contrast * 100;
+            const hue = coolSlider.value * 360;
+    
+            document.body.style.backgroundColor = `hsl(${hue}, ${contrastValue}%, 50%)`;
+        });
+    
+        gradientSlider.addEventListener('input', () => {
+            const gradient = gradientSlider.value;
+            const hue = coolSlider.value * 360;
+            const saturation = saturationSlider.value;
+    
+            if (gradient > 0.5) {
+                document.body.style.background = `hsl(${hue}, ${saturation * 100}%, 50%)`;
+            } else {
+                document.body.style.background = `linear-gradient(to right, hsl(${(hue + 180) % 360 - hue}, ${saturation * 100}%, 50%), hsl(${hue}, ${saturation * 100}%, 50%))`;
+            }
+        });
+    
+        saturationSlider.addEventListener('input', () => {
+            const saturation = saturationSlider.value;
+            const hue = coolSlider.value * 360;
+            const brightness = 50 + (saturation - 0.5) * 100;
+    
+            document.body.style.backgroundColor = `hsl(${hue}, ${saturation * 100}%, ${brightness}%)`;
+            if (brightness > 70) {
+                spotifyApiButton.style.color = '#000';
+                sliderLabels.forEach(label => {
+                    label.style.color = '#000';
+                });
+            } else {
+                sliderLabels.forEach(label => {
+                    label.style.color = '#fff';
+                });
+                spotifyApiButton.style.color = '#fff';
+            }
+        });
+    
+        textureSlider.addEventListener('input', () => {
+            const texture = textureSlider.value;
+            const hue = coolSlider.value * 360;
+    
+            if (texture < 0.5) {
+                document.body.style.backgroundImage = `radial-gradient(circle, hsl(${hue}, ${saturationSlider.value * 100}%, ${brightnessSlider.value}%) ${texture * 200}%, rgba(0, 0, 0, 0) ${texture * 200}%)`;
+            } else {
+                document.body.style.backgroundImage = `linear-gradient(to bottom, hsl(${hue}, ${saturationSlider.value * 100}%, ${brightnessSlider.value}%) ${texture * 200}%, rgba(0, 0, 0, 0) ${texture * 200}%)`;
+            }
+        });
+    
+        neutralSlider.addEventListener('input', () => {
+            const neutral = 100 - neutralSlider.value * 100;
+            const hue = coolSlider.value * 360;
+    
+            document.body.style.backgroundColor = `hsl(${hue}, ${neutral}%, ${saturationSlider.value * 100}%)`;
+        });
+    
+        spotifyApiButton.addEventListener('click', async () => {
+            try {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const sliderValues = {};
+                sliders.forEach(slider => {
+                    sliderValues[slider.id] = parseFloat(slider.value);
+                });
+                const payload = JSON.stringify({ sliders: sliderValues });
+    
+                const response = await fetch('/playlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: payload,
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data from Spotify API');
+                }
+                const data = await response.json();
+                console.log('Data from Spotify API:', data);
+            } catch (error) {
+                console.error('Error fetching data from Spotify API:', error);
+            }
+        });
+    });    
+    </script>
+    
 </body>
 </html>

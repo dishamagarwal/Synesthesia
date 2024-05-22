@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Data from Spotify API:', data);
         } catch (error) {
             console.error('Error fetching data from Spotify API:', error);
-            // Handle the error, show an error message, or retry the request
         }
     });
 });

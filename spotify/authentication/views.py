@@ -3,8 +3,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 from spotipy.oauth2 import SpotifyOAuth
 from django.http import JsonResponse
-import spotipy
-import json
+import spotipy, json, requests
 
 def index(request):
     return HttpResponse("Hello, world. You're at the auth index.")
@@ -21,22 +20,29 @@ def login(request):
 def home(request):
     return render(request, 'index.html')
 
+def generatePlaylistName():
+    response = requests.get("https://random-word-api.herokuapp.com/word?number=2")
+    words = []
+    if response.status_code == 200:
+        words = response.json()
+    else: 
+        words = ["Cool", "Tunes"]
+    playlist_name = f"{words[0].capitalize()} {words[1].capitalize()}"
+    print(f"Generated playlist name: {playlist_name}")
+    return playlist_name
+
 def getPlaylist(request):
-    print('request', request)
     base_url = "https://api.spotify.com/v1/recommendations"
     try:
         access_token = request.session.get('spotify_token')
-        data = json.loads(request.body)
-        sliders = data.get('sliders', {})
-        print('Slider values:', sliders)
-        genres = sp.recommendation_genre_seeds()['genres']
-        
+        sliders = json.loads(request.body).get('sliders', {})
+
         recommendations = sp.recommendations(
-            seed_genres=genres[:5], # send the actual genres you want
-            limit=13,
-            target_valence=sliders['melancholic'],  # Example: mapping melancholic to valence
-            target_danceability=sliders['electronic'],  # Example: mapping electronic to danceability
-            target_energy=sliders['energy']
+            seed_genres = sp.recommendation_genre_seeds()['genres'][:5], # send the actual genres you want
+            limit = 13,
+            target_valence = sliders['melancholic'],  # mapping melancholic to valence
+            target_danceability = sliders['electronic'],  # mapping electronic to danceability
+            target_energy = sliders['energy']
         )
         tracks = []
         for track in recommendations["tracks"]:
@@ -47,19 +53,18 @@ def getPlaylist(request):
                 # "preview_url": track["preview_url"]
             }
             tracks.append(track_info)
-        print("Recommendations:", tracks)
 
         # Generate a unique and cool name for the playlist (e.g., "My Awesome Playlist")
-        playlist_name = "My Awesome Playlist"
-        # Create a new playlist for the user
-        user_id = sp.me()['id']  # Get the user's Spotify ID
-        playlist = sp.user_playlist_create(user=user_id, name=playlist_name, public=False)
-        # Extract the playlist ID from the response
-        playlist_id = playlist['id']
-        # Get the track URIs from the recommendations
-        track_uris = [track['uri'] for track in recommendations['tracks']]
-        # Add tracks to the created playlist
-        sp.playlist_add_items(playlist_id=playlist_id, items=track_uris)
+        playlist_name = generatePlaylistName()
+        # # Create a new playlist for the user
+        # user_id = sp.me()['id']  # Get the user's Spotify ID
+        # playlist = sp.user_playlist_create(user=user_id, name=playlist_name, public=False)
+        # # Extract the playlist ID from the response
+        # playlist_id = playlist['id']
+        # # Get the track URIs from the recommendations
+        # track_uris = [track['uri'] for track in recommendations['tracks']]
+        # # Add tracks to the created playlist
+        # sp.playlist_add_items(playlist_id=playlist_id, items=track_uris)
         print(f"Playlist '{playlist_name}' created and tracks added successfully!")
         
         return JsonResponse({'message': 'got data!'})

@@ -4,6 +4,9 @@ from django.urls import reverse
 from spotipy.oauth2 import SpotifyOAuth
 from django.http import JsonResponse
 import spotipy, json, requests
+from django.http import HttpResponse
+from PIL import Image, ImageDraw, ImageFilter
+import io, random, colorsys
 
 def index(request):
     return HttpResponse("Hello, world. You're at the auth index.")
@@ -74,3 +77,49 @@ def savePlaylistToSpotify(request, recommendations):
     track_uris = [track['uri'] for track in recommendations['tracks']]
     sp.playlist_add_items(playlist_id=playlist_id, items=track_uris)
     print(f"Playlist '{playlist_name}' created and tracks added successfully!")
+
+def hsl_to_rgb(h, s, l):
+    r, g, b = colorsys.hls_to_rgb(h/360.0, l/100.0, s/100.0)
+    return int(r*255), int(g*255), int(b*255)
+
+def generateAbstractImage(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            h = float(data['h'])
+            s = float(data['s'])
+            l = float(data['l'])
+        except (ValueError, KeyError) as e:
+            return JsonResponse({'error': 'Invalid HSL values'}, status=400)
+        
+        rgb_color = hsl_to_rgb(h, s, l)
+        
+        # Create an image with the specified color
+        image_size = (500, 500)  # Size of the image
+        image = Image.new("RGB", image_size, rgb_color)
+        draw = ImageDraw.Draw(image)
+        
+        # Generate abstract pattern
+        for _ in range(10):  # Number of circles
+            circle_size = (150, 150)  # Size of each circle
+            upper_left = (
+                random.randint(0, image_size[0] - circle_size[0]),
+                random.randint(0, image_size[1] - circle_size[1]),
+            )
+            lower_right = (
+                upper_left[0] + circle_size[0],
+                upper_left[1] + circle_size[1],
+            )
+            circle_color = tuple([random.randint(0, 255) for _ in range(3)])
+            draw.ellipse([upper_left, lower_right], fill=circle_color)
+        
+        # Apply blur to create a similar effect
+        image = image.filter(ImageFilter.GaussianBlur(radius=20))
+        
+        buffer = io.BytesIO()
+        image.save(buffer, format="PNG")
+        buffer.seek(0)
+
+        return HttpResponse(buffer, content_type='image/png')
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

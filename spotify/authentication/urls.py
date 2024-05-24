@@ -7,4 +7,5 @@ urlpatterns = [
     path("", views.login, name="login"),
     path("home", views.home, name="home"),
     path("playlist", views.getPlaylist, name='getPlaylist'),
+    path('generate_abstract_image', views.generateAbstractImage, name='generateAbstractImage'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

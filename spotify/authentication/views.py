@@ -61,17 +61,16 @@ def getPlaylist(request):
             }
             tracks.append(track_info)
         print(tracks)
-
-        # Generate a unique and cool name for the playlist (e.g., "My Awesome Playlist")
-        playlist_name = generatePlaylistName()
-        user_id = sp.me()['id'] 
-        playlist = sp.user_playlist_create(user=user_id, name=playlist_name, public=False)
-        playlist_id = playlist['id']
-        track_uris = [track['uri'] for track in recommendations['tracks']]
-        sp.playlist_add_items(playlist_id=playlist_id, items=track_uris)
-        print(f"Playlist '{playlist_name}' created and tracks added successfully!")
-
-        return JsonResponse({'message': 'got data!'})
+        return JsonResponse({'tracks': tracks})
     except json.JSONDecodeError as e:
         print('Error decoding JSON:', str(e))  # Print JSON decode error for debugging
         return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+    
+def savePlaylistToSpotify(request, recommendations):
+    playlist_name = generatePlaylistName()
+    user_id = sp.me()['id'] 
+    playlist = sp.user_playlist_create(user=user_id, name=playlist_name, public=False)
+    playlist_id = playlist['id']
+    track_uris = [track['uri'] for track in recommendations['tracks']]
+    sp.playlist_add_items(playlist_id=playlist_id, items=track_uris)
+    print(f"Playlist '{playlist_name}' created and tracks added successfully!")

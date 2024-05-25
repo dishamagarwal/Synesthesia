@@ -13,7 +13,7 @@ def index(request):
 
 def login(request):
     global sp
-    scope = "user-library-read playlist-modify-private"
+    scope = "user-library-read playlist-modify-private streaming"
     redirect_uri = "http://127.0.0.1:8080/home"
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, redirect_uri=redirect_uri))
     # results = sp.current_user_saved_tracks()
@@ -43,19 +43,10 @@ def generateCoverImage(h, s, l):
     # Encode the image data as a Base64 encoded JPEG image string
     return f"data:image/jpeg;base64,{base64.b64encode(buffer.getvalue()).decode()}"
 
-def getPlaylist(request):
-    base_url = "https://api.spotify.com/v1/recommendations"
-    try:
-        access_token = request.session.get('spotify_token')
-        data = json.loads(request.body)
-        sliders = data.get('sliders', {})
-        playlist_name = generatePlaylistName()
-        cover_image = generateCoverImage(data.get('h'), data.get('s'), data.get('l'))
-        # print("sliders", sliders)
-
-        recommendations = sp.recommendations(
+def generateSongRecs(sliders):
+    recommendations = sp.recommendations(
             seed_genres = sp.recommendation_genre_seeds()['genres'][:5], # ToDO: filter genres based on color
-            limit = 13,
+            limit = 12,
             target_acousticness = sliders.get("neutral", 0.5),  # mapping neutral to acousticness
             target_danceability = sliders.get("darkness", 0.5),  # mapping darkness to danceability
             max_duration_ms = 300000,
@@ -68,20 +59,39 @@ def getPlaylist(request):
             target_tempo = sliders.get("saturation", 0.5),  # mapping saturation to tempo
             target_valence = sliders.get("darkness", 0.5)  # mapping darkness to valence
         )
-        tracks = []
-        for track in recommendations["tracks"]:
-            track_info = {
-                "name": track["name"],
-                "artists": [artist["name"] for artist in track["artists"]],
-                # "album": track["album"]["name"],
-                # "preview_url": track["preview_url"]
+    tracks = []
+    for track in recommendations["tracks"]:
+        track_info = {
+            "name": track["name"],
+            "artists": [artist["name"] for artist in track["artists"]],
+            "album": {
+                "images": track["album"]["images"]  # Directly use the album images array from the track
             }
-            tracks.append(track_info)
-        return JsonResponse({
-            'tracks': tracks,
-            'playlist_name': playlist_name,
-            'cover_image': cover_image
-        })
+        }
+        tracks.append(track_info)
+    return tracks
+
+def getPlaylist(request):
+    base_url = "https://api.spotify.com/v1/recommendations"
+    try:
+        access_token = request.session.get('spotify_token')
+        data = json.loads(request.body)
+        playlist_name = generatePlaylistName()
+        cover_image = generateCoverImage(data.get('h'), data.get('s'), data.get('l'))
+        tracks = generateSongRecs(sliders=data.get('sliders', {}))
+        # return JsonResponse({
+        #     'tracks': tracks,
+        #     'playlist_name': playlist_name,
+        #     'cover_image': cover_image
+        # })
+        request.session['playlist_name'] = playlist_name
+        request.session['cover_image'] = cover_image
+        request.session['tracks'] = tracks
+        request.session['spotify_token'] = sp.auth_manager.get_access_token()
+
+        # redirect_uri = "http://127.0.0.1:8080/home"
+        # return redirect(reverse('playlist_page'))
+        return JsonResponse({'redirect': '/playlist_page'})
     except json.JSONDecodeError as e:
         print('Error decoding JSON:', str(e))
         return JsonResponse({'error': 'Invalid JSON format'}, status=400)
@@ -138,3 +148,16 @@ def generateAbstractImage(request):
         return HttpResponse(buffer, content_type='image/png')
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def playlist_page(request):
+    playlist_name = request.session.get('playlist_name')
+    cover_image = request.session.get('cover_image')
+    tracks = request.session.get('tracks')
+    spotify_token = request.session.get('spotify_token')
+
+    return render(request, 'playlist.html', {
+        'playlist_name': playlist_name,
+        'cover_image': cover_image,
+        'tracks': tracks,
+        'spotify_token': spotify_token
+    })

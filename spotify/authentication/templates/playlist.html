@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ playlist_name }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            {% comment %} margin: 0 auto; {% endcomment %}
+            {% comment %} padding: 20px; {% endcomment %}
+        }
+        .playlist-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .playlist-header img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .playlist-tracks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+        .track {
+            text-align: center;
+        }
+        .track img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="playlist-header">
+            <h1>{{ playlist_name }}</h1>
+            <img src="{{ cover_image }}" alt="Playlist Cover">
+        </div>
+        <div class="playlist-tracks">
+            {% for track in tracks %}
+            <div class="track">
+                <img src="{{ track.album.images.0.url }}" alt="{{ track.name }}">
+                <p>{{ track.name }} - {{ track.artists|join:", " }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

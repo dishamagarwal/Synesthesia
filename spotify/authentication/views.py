@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import spotipy, json, requests
 from django.http import HttpResponse
 from PIL import Image, ImageDraw, ImageFilter
-import io, random, colorsys
+import io, random, colorsys, base64
 
 def index(request):
     return HttpResponse("Hello, world. You're at the auth index.")
@@ -32,11 +32,25 @@ def generatePlaylistName():
     playlist_name = f"{words[0].capitalize()} {words[1].capitalize()}"
     return playlist_name
 
+def generateCoverImage(h, s, l):
+    h, s, l = colorsys.rgb_to_hls(h / 255.0, s / 100.0, l / 100.0)
+    image_size = (500, 500)  # Size of the image
+    rgb_color = tuple(int(val * 255) for val in colorsys.hls_to_rgb(h, l, s))
+    image = Image.new("RGB", image_size, rgb_color)
+    buffer = io.BytesIO()
+    image.save(buffer, format="JPEG")
+    buffer.seek(0)
+    # Encode the image data as a Base64 encoded JPEG image string
+    return f"data:image/jpeg;base64,{base64.b64encode(buffer.getvalue()).decode()}"
+
 def getPlaylist(request):
     base_url = "https://api.spotify.com/v1/recommendations"
     try:
         access_token = request.session.get('spotify_token')
-        sliders = json.loads(request.body).get('sliders', {})
+        data = json.loads(request.body)
+        sliders = data.get('sliders', {})
+        playlist_name = generatePlaylistName()
+        cover_image = generateCoverImage(data.get('h'), data.get('s'), data.get('l'))
         # print("sliders", sliders)
 
         recommendations = sp.recommendations(
@@ -63,19 +77,21 @@ def getPlaylist(request):
                 # "preview_url": track["preview_url"]
             }
             tracks.append(track_info)
-        print(tracks)
-        return JsonResponse({'tracks': tracks})
+        return JsonResponse({
+            'tracks': tracks,
+            'playlist_name': playlist_name,
+            'cover_image': cover_image
+        })
     except json.JSONDecodeError as e:
-        print('Error decoding JSON:', str(e))  # Print JSON decode error for debugging
+        print('Error decoding JSON:', str(e))
         return JsonResponse({'error': 'Invalid JSON format'}, status=400)
     
-def savePlaylistToSpotify(request, recommendations):
+def savePlaylistToSpotify(recommendations):
     playlist_name = generatePlaylistName()
-    user_id = sp.me()['id'] 
-    playlist = sp.user_playlist_create(user=user_id, name=playlist_name, public=False)
-    playlist_id = playlist['id']
+    playlist = sp.user_playlist_create(user=sp.me()['id'] , name=playlist_name, public=False)
     track_uris = [track['uri'] for track in recommendations['tracks']]
-    sp.playlist_add_items(playlist_id=playlist_id, items=track_uris)
+    sp.playlist_add_items(playlist_id=playlist['id'], items=track_uris)
+    sp.playlist_upload_cover_image(playlist_id=playlist['id'], image_b64="")
     print(f"Playlist '{playlist_name}' created and tracks added successfully!")
 
 def hsl_to_rgb(h, s, l):
@@ -115,7 +131,6 @@ def generateAbstractImage(request):
         
         # Apply blur to create a similar effect
         image = image.filter(ImageFilter.GaussianBlur(radius=20))
-        
         buffer = io.BytesIO()
         image.save(buffer, format="PNG")
         buffer.seek(0)
